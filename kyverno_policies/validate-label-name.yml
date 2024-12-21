@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: validate-label-with-imagename
+spec:
+  rules:
+    - name: validate-label-in-default-namespace
+      match:
+        resources:
+          namespaces:
+            - default
+            - test
+            - app
+          kinds:
+            - Pod
+      validate:
+        failureAction: Enforce
+        message: "The label 'name' must follow the format 'namespace_imageName_imageVersion'."
+        pattern:
+          metadata:
+            labels:
+              name: "{{request.object.metadata.namespace}}_{{request.object.spec.containers[0].image}}_*"

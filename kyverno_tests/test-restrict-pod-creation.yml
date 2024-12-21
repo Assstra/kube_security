@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: non-compliant-pod
+  namespace: falco
+spec:
+  containers:
+    - name: non-compliant-container
+      image: nginx
+      resources:
+        limits:
+          memory: "128Mi"
+        requests:
+          memory: "64Mi"
+          cpu: "250m"

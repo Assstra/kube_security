@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-another-imagepullpolicy
+  namespace: test
+  # Mandatory for validate-label-name policy
+  labels:
+    name: "test_nginx_test"
+spec:
+  containers:
+    - name: container-imagepullpolicy
+      image: nginx
+      imagePullPolicy: Always
+      # Mandatory for enforce-ressources-limit rule
+      resources:
+        limits:
+          memory: "128Mi"
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-without-imagepullpolicy
+  namespace: test
+  # Mandatory for validate-label-name policy
+  labels:
+    name: "test_nginx_prod"
+spec:
+  containers:
+    - name: container-without-imagepullpolicy
+      image: nginx
+      # Mandatory for enforce-ressources-limit rule
+      resources:
+        limits:
+          memory: "128Mi"
+        requests:
+          memory: "64Mi"
+          cpu: "250m"

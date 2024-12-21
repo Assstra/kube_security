@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-pod-creation
+spec:
+  rules:
+    - name: deny-pods-in-restricted-ns
+      match:
+        any:
+          - resources:
+              kinds:
+              - Pod
+              namespaces:
+              - kyverno
+              - falco
+      validate:
+        failureAction: Enforce
+        message: "Creating a pod in this namespace is prohibited"
+        deny: {}

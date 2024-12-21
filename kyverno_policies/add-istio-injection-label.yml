@@ -1,0 +1,16 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-istio-injection-label
+spec:
+  rules:
+    - name: add-istio-injection-label-to-namespace
+      match:
+        resources:
+          kinds:
+            - Namespace
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              istio-injection: "enabled"
