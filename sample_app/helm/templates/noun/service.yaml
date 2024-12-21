@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "simple-api.noun.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: noun
+    release: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: noun
+    release: {{ .Release.Name }}

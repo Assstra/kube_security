@@ -1,0 +1,39 @@
+aggregator:
+  replica: 1
+  image:
+    repository: docker.io/assstra
+    name: aggregator
+    tag: "1.0"
+  domain: simple-api.kube
+  resources:
+    limits:
+      memory: "128Mi"
+    requests:
+      memory: "64Mi"
+      cpu: "250m"
+
+noun:
+  replica: 1
+  image:
+    repository: docker.io/assstra
+    name: noun-provider
+    tag: "1.0"
+  resources:
+    limits:
+      memory: "128Mi"
+    requests:
+      memory: "64Mi"
+      cpu: "250m"
+
+verb:
+  replica: 1
+  image:
+    repository: docker.io/assstra
+    name: verb-provider
+    tag: "1.0"
+  resources:
+    limits:
+      memory: "128Mi"
+    requests:
+      memory: "64Mi"
+      cpu: "250m"

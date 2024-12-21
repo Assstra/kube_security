@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "simple-api.noun.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: noun
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.noun.replica | default 1}}
+  selector:
+    matchLabels:
+      app: noun
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: noun
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: provider
+          image: "{{ .Values.noun.image.repository }}/{{ .Values.noun.image.name}}:{{ .Values.noun.image.tag}}"
+          env:
+            - name: WORD_TYPE
+              value: NOUN
+            - name: PORT
+              value: "3000"
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          resources:
+            {{- toYaml .Values.noun.resources | nindent 12 }}

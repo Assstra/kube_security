@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "simple-api.aggregator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: aggregator
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.aggregator.replica | default 1}}
+  selector:
+    matchLabels:
+      app: aggregator
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: aggregator
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: aggregator
+          image: "{{ .Values.aggregator.image.repository }}/{{ .Values.aggregator.image.name}}:{{ .Values.aggregator.image.tag}}"
+          env:
+            - name: NOUN_PROVIDER_URL
+              value: http://{{ include "simple-api.noun.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+            - name: VERB_PROVIDER_URL
+              value: http://{{ include "simple-api.verb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          resources:
+            {{- toYaml .Values.aggregator.resources | nindent 12 }}
