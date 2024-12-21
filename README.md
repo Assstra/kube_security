@@ -12,22 +12,23 @@ wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
 **And create a new cluster:**
 ```bash
-k3d cluster create k8s_security
+k3d cluster create k8s-security
 ```
 
 ## 🛠️ Setup Istio
 
 Istio is a service mesh that provides a way to control how microservices share data with one another. It provides a way to secure, connect, and monitor microservices. To do so, it uses a sidecar proxy for each service instance.
 
-**Install CRDs:**
+**Get the Istio Helm repository:**
 ```bash
-helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
+helm repo add istio https://istio-release.storage.googleapis.com/charts
 ```
 
-**Install discovery:**
+**Install CRDs & daemon:**
 ```bash
+helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
 helm install istiod istio/istiod -n istio-system --wait
-``` 
+```
 
 **Create and update namespace istio:**
 ```bash
@@ -49,7 +50,7 @@ helm install sample-app ./sample_app/helm -n app
 
 > 📝 **Note**: You may need to port-forward the service to access it. To do so, run the following command:
 ```bash
-kubectl port-forward svc/<app_service_name> 3000:3000 -n app
+kubectl port-forward svc/sample-app-aggregator 3000:80 -n app
 ```
 
 ## 🛡️ Setup Falco
@@ -63,7 +64,7 @@ helm install falco falcosecurity/falco --create-namespace --namespace falco
 
 Change the [**values.yml**](falco/values.yml) file to use the Discord webhook URL you want and upgrade the Falco deployment:
 ```bash
-helm upgrade falco falcosecurity/falco -f deploy/values.yml -n falco
+helm upgrade falco falcosecurity/falco -f falco/values.yml -n falco
 ```
 
 > 📝 **Note**: You can test this by running `kubectl exec -it sample-app-<pod-id> -- /bin/bash` and checking either for Falco logs or the Discord channel. To check Falco logs, use the following command:
