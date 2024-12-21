@@ -47,6 +47,11 @@ kubectl apply -f istio/peer-auth.yml
 helm install sample-app ./sample_app/helm -n app
 ```
 
+> 📝 **Note**: You may need to port-forward the service to access it. To do so, run the following command:
+```bash
+kubectl port-forward svc/<app_service_name> 3000:3000 -n app
+```
+
 ## 🛡️ Setup Falco
 
 **Add the Falco Helm repository and install Falco:**
